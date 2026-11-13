@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>가좌마을 대중교통 개선안</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--text:#1c2333;--sub:#6b7488;--accent:#3b6cf6;--line:#e3e7f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--card:#1c212c;--text:#eef1f7;--sub:#9aa3b5;--accent:#6b8cff;--line:#2b3140}}
+:root[data-theme="dark"]{--bg:#12151c;--card:#1c212c;--text:#eef1f7;--sub:#9aa3b5;--accent:#6b8cff;--line:#2b3140}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.6}
+.wrap{max-width:560px;margin:0 auto;padding:24px 16px}
+h1{font-size:20px;margin:8px 0 4px}
+.sub{color:var(--sub);font-size:14px;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.count{font-size:13px;color:var(--sub);margin-bottom:8px}
+.msg{font-size:16px;white-space:pre-wrap;min-height:140px}
+.nav{display:flex;gap:10px;margin-top:14px}
+button{flex:1;font:inherit;font-size:16px;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text)}
+button.send{background:var(--accent);color:#fff;border:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🚌 가좌마을 대중교통 개선안</h1>
+  <p class="sub">문자를 고른 뒤 전송하기를 누르면 문자 앱이 열립니다.</p>
+  <div class="card">
+    <div class="count" id="count"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+  <div class="nav">
+    <button id="prev">◀ 이전</button>
+    <button id="next">다음 ▶</button>
+  </div>
+  <div class="nav"><button class="send" id="send">전송하기</button></div>
+</div>
+<script>
+// ▼▼ 여기만 수정하세요 ▼▼
+const RECIPIENTS = ["01073163004","01043396868","01050318903","01062539293"]; // 수신자 번호
+const MESSAGES = [
+`안녕하세요 가좌마을 주민입니다
+
+일단 고양시의 가좌마을 대중교통 개선안(057번 단축, 999번 진입, 1100번 4대 증차)을 환영합니다. 
+다만 아래 사항이 꼭 이행되어야 합니다.
+
+1. N007번·062B번 킨텍스행 모두 유지와 999번 가좌마을 투입: 
+
+N007번은 킨텍스역까지 약 20분이 걸리는 직결 노선입니다. 999번 개선안을 가좌마을-킨텍스 메인노선으로 하기엔 대화마을을 빙 돌아가 이동시간이 크게 늘어 대체가 어렵습니다. 
+
+만약 N007, 062B 둘 중 하나라도 킨텍스행이 중단되면 999번 노선도를 재검토해주십시요.
+
+2. 057번 노선 변경시 배차간격 단축:
+ 노선 단축으로인한 중앙로 접근성이 저하됩니다 저하된 만큼 대화역 접근성이 개선되어야 주엽·정발산·백석 방면 환승 부담이 줄어듭니다.
+
+3. 999번 15분 배차간격 준수
+
+4. 1100번 4대 증차를 057번 단축과 같은 시기에 이행
+
+이번 개선안이 가좌마을 주민들의 교통 선택권을 실제로 넓히는 결과가 되도록 세심히 살펴봐 주시기 바라며
+주민들의 요구사항이 관철될수 있도록 해주십시오`
+];
+// ▲▲ 여기까지 ▲▲
+
+let i = 0;
+const $ = id => document.getElementById(id);
+function render(){
+  $("msg").textContent = MESSAGES[i];
+  $("count").textContent = (i+1) + " / " + MESSAGES.length;
+  if(MESSAGES.length < 2){ $("prev").style.display = "none"; $("next").style.display = "none"; $("count").style.display = "none"; }
+}
+$("prev").onclick = () => { i = (i - 1 + MESSAGES.length) % MESSAGES.length; render(); };
+$("next").onclick = () => { i = (i + 1) % MESSAGES.length; render(); };
+$("send").onclick = () => {
+  const body = encodeURIComponent(MESSAGES[i]);
+  const nums = RECIPIENTS.join(",");
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  location.href = ios ? "sms:/open?addresses=" + nums + "&body=" + body
+                      : "sms:" + nums + "?body=" + body;
+};
+render();
+</script>
+</body>
+</html>
